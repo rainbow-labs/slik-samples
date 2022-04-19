@@ -23,3 +23,21 @@
     at processTicksAndRejections (node:internal/process/task_queues:96:5)
 [error] 
 [error] Error: Failed to get Firebase project undefined. Please make sure the project exists and your account has permission to access it.
+[debug] [2022-04-19T18:21:00.086Z] ----------------------------------------------------------------------
+[debug] [2022-04-19T18:21:00.087Z] Command:       /usr/local/Cellar/node/17.0.1/bin/node /usr/local/bin/firebase deploy --only hosting:slikfilesdemo
+[debug] [2022-04-19T18:21:00.088Z] CLI Version:   10.5.0
+[debug] [2022-04-19T18:21:00.088Z] Platform:      darwin
+[debug] [2022-04-19T18:21:00.088Z] Node Version:  v17.0.1
+[debug] [2022-04-19T18:21:00.089Z] Time:          Tue Apr 19 2022 11:21:00 GMT-0700 (Pacific Daylight Time)
+[debug] [2022-04-19T18:21:00.090Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-04-19T18:21:00.183Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/undefined [none]
+[debug] [2022-04-19T18:21:00.509Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/undefined 403
+[debug] [2022-04-19T18:21:00.513Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/undefined {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2022-04-19T18:21:00.517Z] HTTP Error: 403, The caller does not have permission
+[debug] [2022-04-19T18:21:00.637Z] FirebaseError: HTTP Error: 403, The caller does not have permission
+    at module.exports (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:47:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:286:39)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[error] 
+[error] Error: Failed to get Firebase project undefined. Please make sure the project exists and your account has permission to access it.
