@@ -7,6 +7,9 @@ const { Dragger } = Upload;
 const { Text } = Typography;
 
 function App() {
+
+  const [isUploading, setIsUploading] = useState(false)
+
   const [selectedFiles, setSelectedFiles] = useState<any>([])
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
 
@@ -43,19 +46,31 @@ function App() {
       return;
     }
 
+    setIsUploading(true)
+
     const filesHandler = await SlikFiles.initialize(initParams);
     let uploadOptions: any = {
       isEncrypted: false,
       networks: selectedNetworks,
       walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
     }
+
+    let pendingUploadCount = selectedFiles.length
     selectedFiles.forEach((selectedFile: any) => {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
         console.log("The unique identifier of the file uploaded: ", fileId);
+
+        message.success('File upload finished')
+
+        pendingUploadCount -= 1
+
+        if (pendingUploadCount === 0) {
+          setIsUploading(false)
+          setSelectedFiles([]);
+        }
       });
     });
-    setSelectedFiles([]);
   }
 
   const renderDraggerDiv = () => {
@@ -86,9 +101,13 @@ function App() {
       <p style={{ margin: 16 }}> Choose Network<br /></p>
       <Checkbox.Group style={{ margin: 16 }} options={networkOptions} defaultValue={['filecoin']} onChange={onChange} />
       {renderDraggerDiv()}
-      <Button type="primary" style={{ margin: 16 }} onClick={() => {
-        uploadFile()
-      }}>Upload</Button>
+      <Button
+        type="primary"
+        loading={isUploading}
+        style={{ margin: 16 }}
+        onClick={() => uploadFile()}>
+        Upload
+      </Button>
     </div>
   );
 }
