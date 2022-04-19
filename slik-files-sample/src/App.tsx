@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
-import { SlikFiles } from 'slik-files';
-import Icon, { AppstoreOutlined, DeleteOutlined, EditOutlined, FileAddOutlined, FireOutlined, MessageOutlined, MoreOutlined, PlusOutlined, ShareAltOutlined, UnorderedListOutlined, UploadOutlined, CloseOutlined } from '@ant-design/icons';
-import { Avatar, Breadcrumb, Button, Col, Checkbox, Empty, Menu, message, PageHeader, Popover, Radio, Row, Space, Typography, Upload } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import { SlikFiles } from '@sliksafe/slik-files';
+import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload } from 'antd';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
