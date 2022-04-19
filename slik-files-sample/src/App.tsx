@@ -28,7 +28,7 @@ function App() {
 
   const props = {
     name: 'file',
-    multiple: true,
+    multiple: false,
     beforeUpload(file: any) {
       const currentSelectedFiles = selectedFiles;
       currentSelectedFiles.push(file);
@@ -81,7 +81,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ textAlign: 'center' }}>
       <p style={{ margin: 16 }}>Slik Files Demo App<br /></p>
       <p style={{ margin: 16 }}> Choose Network<br /></p>
       <Checkbox.Group style={{ margin: 16 }} options={networkOptions} defaultValue={['filecoin']} onChange={onChange} />
