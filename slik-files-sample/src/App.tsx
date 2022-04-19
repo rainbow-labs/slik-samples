@@ -42,7 +42,7 @@ function App() {
       message.error("Please select a network");
       return;
     }
-    
+
     const filesHandler = await SlikFiles.initialize(initParams);
     let uploadOptions: any = {
       isEncrypted: false,
@@ -64,14 +64,13 @@ function App() {
         {...props} fileList={selectedFiles}
         style={{ backgroundColor: 'transparent', width: "70%", margin: "auto" }}>
         <Empty
-          image={<div />}
           description={
             <Row align='middle' justify='center'>
               <Col>
                 <div
                   className='tip-status-card'
                 >
-                  <Text style={{ fontSize: '24px' }}>Drag & Drop your folder</Text>
+                  <Text>Drag and Drop a file</Text>
                 </div>
               </Col>
             </Row>
