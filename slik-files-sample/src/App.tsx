@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
-import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps } from 'antd';
+import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin } from 'antd';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -16,6 +16,18 @@ function App() {
   const [selectedFiles, setSelectedFiles] = useState<any>([])
   const [uploadedFile, setUploadedFile] = useState<any>()
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
+  const [networkDetails, setNetworkDetails] = useState<any>([]);
+
+  useEffect(() => {
+    if (!!uploadedFile) {
+      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
+    }
+  }, [uploadedFile]);
+
+  const networkDetailsListenerCallback = (response: any) => {
+    console.log("networkDetailsListenerCallback", response);
+    setNetworkDetails(response);
+  }
 
   function onChange(selectedValues: any) {
     setSelectedNetworks(selectedValues);
@@ -108,7 +120,7 @@ function App() {
       return
     }
     setIsDownloading(true)
-    const filesHandler = SlikFiles.get();
+    const filesHandler = SlikFiles.getInstance();
     let downloadOptions: any = {
       fileId: uploadedFile,
       walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
@@ -207,6 +219,36 @@ function App() {
     )
   }
 
+  const columns = [
+    {
+      title: 'Network Name',
+      dataIndex: 'networkName',
+      key: 'networkName',
+    },
+    {
+      title: 'Network Url',
+      dataIndex: 'networkUrl',
+      key: 'networkUrl',
+      render: (networkUrl: any) => {
+        if (!!!networkUrl) {
+          return (<Spin />);
+        }
+        return (
+          <a href={networkUrl} target={'_blank'}>
+            {networkUrl}
+          </a>
+        )
+      }
+    },
+  ];
+
+  const renderNetworkDetails = () => {
+    if (!!!networkDetails || networkDetails.length === 0)
+      return <></>;
+
+    return (<Table dataSource={networkDetails} columns={columns} style={{ maxWidth: '60%' }} />);
+  }
+
   return (
     <div className="App">
       <Row justify='center'>
@@ -218,7 +260,7 @@ function App() {
             <Step title="Select storage networks" description={renderStorageNetworkSelection()} />
             <Step title="Upload file" description={renderFileSelection()} />
           </Steps>
-
+          {renderNetworkDetails()}
         </Col>
       </Row>
     </div>
