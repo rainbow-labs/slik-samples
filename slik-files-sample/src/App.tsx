@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
-import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin } from 'antd';
+import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -17,6 +17,7 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState<any>()
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
   const [networkDetails, setNetworkDetails] = useState<any>([]);
+  const [downloadingProgress, setDownloadingProgress] = useState(0);
 
   useEffect(() => {
     if (!!uploadedFile) {
@@ -131,8 +132,10 @@ function App() {
         console.error(err);
       } else {
         console.log("The current status of the downloading file: ", fileStatus);
+        setDownloadingProgress(fileStatus.percentage);
         if (fileStatus.status === "downloaded") {
           setIsDownloading(false)
+          setDownloadingProgress(0)
           message.success({
             key: 'download-success',
             content: 'File download finished'
@@ -194,10 +197,22 @@ function App() {
     )
   }
 
+  const renderProgressBar = () => {
+    if (downloadingProgress === 0) {
+      return <></>;
+    }
+    return (<Row style={{ maxWidth: '50%' }} justify="center" align='middle'>
+      <Col span={24}>
+        <Progress percent={downloadingProgress} />
+      </Col>
+    </Row>);
+  }
+
   const renderFileSelection = () => {
     return (
       <div>
         {renderDraggerDiv()}
+        {renderProgressBar()}
 
         <Button
           type="primary"
@@ -206,16 +221,17 @@ function App() {
           onClick={() => uploadFile()}>
           Upload
         </Button>
-        {uploadedFile ?
-          <Button
-            type="primary"
-            loading={isDownloading}
-            style={{ margin: 16 }}
-            onClick={() => downloadFile()}>
-            Download
-          </Button> : <></>
+        {
+          uploadedFile ?
+            <Button
+              type="primary"
+              loading={isDownloading}
+              style={{ margin: 16 }}
+              onClick={() => downloadFile()}>
+              Download
+            </Button> : <></>
         }
-      </div>
+      </div >
     )
   }
 
