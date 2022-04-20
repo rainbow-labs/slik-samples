@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
-import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps } from 'antd';
+import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -10,10 +10,25 @@ const { Step } = Steps;
 function App() {
 
   const [isUploading, setIsUploading] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   const [apiKey, setAPIKey] = useState<string>()
 
   const [selectedFiles, setSelectedFiles] = useState<any>([])
+  const [uploadedFile, setUploadedFile] = useState<any>()
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
+  const [networkDetails, setNetworkDetails] = useState<any>([]);
+  const [downloadingProgress, setDownloadingProgress] = useState(0);
+
+  useEffect(() => {
+    if (!!uploadedFile) {
+      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
+    }
+  }, [uploadedFile]);
+
+  const networkDetailsListenerCallback = (response: any) => {
+    console.log("networkDetailsListenerCallback", response);
+    setNetworkDetails(response);
+  }
 
   function onChange(selectedValues: any) {
     setSelectedNetworks(selectedValues);
@@ -31,9 +46,7 @@ function App() {
     name: 'file',
     multiple: false,
     beforeUpload(file: any) {
-      const currentSelectedFiles = selectedFiles;
-      currentSelectedFiles.push(file);
-      setSelectedFiles([...currentSelectedFiles]);
+      setSelectedFiles([file]);
       return false;
     }
   };
@@ -82,6 +95,7 @@ function App() {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
         console.log("The unique identifier of the file uploaded: ", fileId);
+        setUploadedFile(fileId);
 
         message.success({
           key: 'upload-success',
@@ -95,6 +109,39 @@ function App() {
           setSelectedFiles([]);
         }
       });
+    });
+  }
+
+  async function downloadFile() {
+    if (!!!uploadedFile) {
+      message.error({
+        key: 'file-download-error',
+        content: 'Please upload a file first'
+      })
+      return
+    }
+    setIsDownloading(true)
+    const filesHandler = SlikFiles.getInstance();
+    let downloadOptions: any = {
+      fileId: uploadedFile,
+      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
+    }
+
+    filesHandler.downloadFile(downloadOptions, (fileStatus: any, err: any) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("The current status of the downloading file: ", fileStatus);
+        setDownloadingProgress(fileStatus.percentage);
+        if (fileStatus.status === "downloaded") {
+          setIsDownloading(false)
+          setDownloadingProgress(0)
+          message.success({
+            key: 'download-success',
+            content: 'File download finished'
+          });
+        }
+      }
     });
   }
 
@@ -132,8 +179,8 @@ function App() {
           />
         </div>
         <div>
-          <Input 
-            placeholder="Enter API Key" 
+          <Input
+            placeholder="Enter API Key"
             style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
             onChange={(event) => setAPIKey(event.target.value)} />
         </div>
@@ -150,10 +197,22 @@ function App() {
     )
   }
 
+  const renderProgressBar = () => {
+    if (downloadingProgress === 0) {
+      return <></>;
+    }
+    return (<Row style={{ maxWidth: '50%' }} justify="center" align='middle'>
+      <Col span={24}>
+        <Progress percent={downloadingProgress} />
+      </Col>
+    </Row>);
+  }
+
   const renderFileSelection = () => {
     return (
       <div>
         {renderDraggerDiv()}
+        {renderProgressBar()}
 
         <Button
           type="primary"
@@ -162,8 +221,48 @@ function App() {
           onClick={() => uploadFile()}>
           Upload
         </Button>
-      </div>
+        {
+          uploadedFile ?
+            <Button
+              type="primary"
+              loading={isDownloading}
+              style={{ margin: 16 }}
+              onClick={() => downloadFile()}>
+              Download
+            </Button> : <></>
+        }
+      </div >
     )
+  }
+
+  const columns = [
+    {
+      title: 'Network Name',
+      dataIndex: 'networkName',
+      key: 'networkName',
+    },
+    {
+      title: 'Network Url',
+      dataIndex: 'networkUrl',
+      key: 'networkUrl',
+      render: (networkUrl: any) => {
+        if (!!!networkUrl) {
+          return (<Spin />);
+        }
+        return (
+          <a href={networkUrl} target={'_blank'}>
+            {networkUrl}
+          </a>
+        )
+      }
+    },
+  ];
+
+  const renderNetworkDetails = () => {
+    if (!!!networkDetails || networkDetails.length === 0)
+      return <></>;
+
+    return (<Table dataSource={networkDetails} columns={columns} style={{ maxWidth: '60%' }} />);
   }
 
   return (
@@ -171,13 +270,13 @@ function App() {
       <Row justify='center'>
         <Col span={24} style={{ maxWidth: '60%' }}>
           <p style={{ margin: 16 }}>Slik Files Demo App<br /></p>
-          
+
           <Steps direction="vertical" current={2} progressDot>
             <Step title="Register API Key" description={renderAPIKeyRegistration()} />
             <Step title="Select storage networks" description={renderStorageNetworkSelection()} />
             <Step title="Upload file" description={renderFileSelection()} />
           </Steps>
-          
+          {renderNetworkDetails()}
         </Col>
       </Row>
     </div>
