@@ -10,9 +10,11 @@ const { Step } = Steps;
 function App() {
 
   const [isUploading, setIsUploading] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   const [apiKey, setAPIKey] = useState<string>()
 
   const [selectedFiles, setSelectedFiles] = useState<any>([])
+  const [uploadedFile, setUploadedFile] = useState<any>()
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
 
   function onChange(selectedValues: any) {
@@ -31,9 +33,7 @@ function App() {
     name: 'file',
     multiple: false,
     beforeUpload(file: any) {
-      const currentSelectedFiles = selectedFiles;
-      currentSelectedFiles.push(file);
-      setSelectedFiles([...currentSelectedFiles]);
+      setSelectedFiles([file]);
       return false;
     }
   };
@@ -82,6 +82,7 @@ function App() {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
         console.log("The unique identifier of the file uploaded: ", fileId);
+        setUploadedFile(fileId);
 
         message.success({
           key: 'upload-success',
@@ -95,6 +96,37 @@ function App() {
           setSelectedFiles([]);
         }
       });
+    });
+  }
+
+  async function downloadFile() {
+    if (!!!uploadedFile) {
+      message.error({
+        key: 'file-download-error',
+        content: 'Please upload a file first'
+      })
+      return
+    }
+    setIsDownloading(true)
+    const filesHandler = SlikFiles.get();
+    let downloadOptions: any = {
+      fileId: uploadedFile,
+      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
+    }
+
+    filesHandler.downloadFile(downloadOptions, (fileStatus: any, err: any) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("The current status of the downloading file: ", fileStatus);
+        if (fileStatus.status === "downloaded") {
+          setIsDownloading(false)
+          message.success({
+            key: 'download-success',
+            content: 'File download finished'
+          });
+        }
+      }
     });
   }
 
@@ -132,8 +164,8 @@ function App() {
           />
         </div>
         <div>
-          <Input 
-            placeholder="Enter API Key" 
+          <Input
+            placeholder="Enter API Key"
             style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
             onChange={(event) => setAPIKey(event.target.value)} />
         </div>
@@ -162,6 +194,15 @@ function App() {
           onClick={() => uploadFile()}>
           Upload
         </Button>
+        {uploadedFile ?
+          <Button
+            type="primary"
+            loading={isDownloading}
+            style={{ margin: 16 }}
+            onClick={() => downloadFile()}>
+            Download
+          </Button> : <></>
+        }
       </div>
     )
   }
@@ -171,13 +212,13 @@ function App() {
       <Row justify='center'>
         <Col span={24} style={{ maxWidth: '60%' }}>
           <p style={{ margin: 16 }}>Slik Files Demo App<br /></p>
-          
+
           <Steps direction="vertical" current={2} progressDot>
             <Step title="Register API Key" description={renderAPIKeyRegistration()} />
             <Step title="Select storage networks" description={renderStorageNetworkSelection()} />
             <Step title="Upload file" description={renderFileSelection()} />
           </Steps>
-          
+
         </Col>
       </Row>
     </div>
