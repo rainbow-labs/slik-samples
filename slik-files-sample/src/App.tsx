@@ -94,6 +94,13 @@ function App() {
     selectedFiles.forEach((selectedFile: any) => {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
+
+        if (!!err) {
+          message.error("Failed to upload file.")
+          console.error('Failed to upload file: ', err)
+          return
+        }
+
         console.log("The unique identifier of the file uploaded: ", fileId);
         setUploadedFile(fileId);
 
