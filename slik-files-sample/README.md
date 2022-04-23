@@ -96,6 +96,8 @@ filesHandler.uploadFile(uploadOptions, (fileId, err) => {
 
 ## Notes
 
+Let's use the decentralized web! 
+
 ![chandler-thumbsup](https://user-images.githubusercontent.com/2617936/164838147-c323a88b-82c9-42fc-9964-2cbe060e7488.gif)
 
 
