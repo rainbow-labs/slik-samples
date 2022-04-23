@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
 import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
+import { saveAs } from 'file-saver';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -94,13 +95,17 @@ function App() {
     selectedFiles.forEach((selectedFile: any) => {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
-        console.log("The unique identifier of the file uploaded: ", fileId);
-        setUploadedFile(fileId);
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("The unique identifier of the file uploaded: ", fileId);
+          setUploadedFile(fileId);
 
-        message.success({
-          key: 'upload-success',
-          content: 'File upload finished'
-        })
+          message.success({
+            key: 'upload-success',
+            content: 'File upload finished'
+          })
+        }
 
         pendingUploadCount -= 1
 
@@ -127,15 +132,18 @@ function App() {
       walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
     }
 
-    filesHandler.downloadFile(downloadOptions, (fileStatus: any, err: any) => {
+    filesHandler.downloadFile(downloadOptions, (downloadHandle: any, file: any, err: any) => {
       if (err) {
         console.error(err);
       } else {
-        console.log("The current status of the downloading file: ", fileStatus);
-        setDownloadingProgress(fileStatus.percentage);
-        if (fileStatus.status === "downloaded") {
+        console.log("Downloading file progress: ", downloadHandle.percentage);
+        setDownloadingProgress(downloadHandle.percentage);
+        if (downloadHandle.status === "downloaded") {
           setIsDownloading(false)
           setDownloadingProgress(0)
+          console.log("File download finished");
+          console.log("Downloaded file: ", file);
+          saveAs(file); // saving file to local disk
           message.success({
             key: 'download-success',
             content: 'File download finished'
