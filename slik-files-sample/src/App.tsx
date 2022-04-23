@@ -95,8 +95,9 @@ function App() {
     selectedFiles.forEach((selectedFile: any) => {
       uploadOptions['file'] = selectedFile;
       filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
-        if (err) {
-          console.error(err);
+        if (!!err) {
+          message.error("Failed to upload file.")
+          console.error('Failed to upload file: ', err)
         } else {
           console.log("The unique identifier of the file uploaded: ", fileId);
           setUploadedFile(fileId);
@@ -133,8 +134,10 @@ function App() {
     }
 
     filesHandler.downloadFile(downloadOptions, (downloadHandle: any, file: any, err: any) => {
-      if (err) {
+      if (!!err) {
         console.error(err);
+        message.error("Failed to download file.")
+        console.error('Failed to download file: ', err)
       } else {
         console.log("Downloading file progress: ", downloadHandle.percentage);
         setDownloadingProgress(downloadHandle.percentage);

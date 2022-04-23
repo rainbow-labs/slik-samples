@@ -1,46 +1,103 @@
-# Getting Started with Create React App
+# Slik Files Sample App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The sample demo app is deployed to - https://slikfilesdemo.web.app/
 
-## Available Scripts
+You would need an API key to upload/download files. You can generate an API key on the developer dashboard: [https://console.developers.sliksafe.com
+](https://console.developers.sliksafe.com)
 
-In the project directory, you can run:
+The detailed documentation to integrate `@sliksafe/slik-files` to upload/download files can be found here: https://slik.gitbook.io/docs/packages/upload-and-download-files
 
-### `yarn start`
+## Upload to Filecoin
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```javascript
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+// Import SlikFiles
+import { SlikFiles } from '@sliksafe/slik-files'
 
-### `yarn test`
+// Initialize slik-files
+const initParams = { apiKey: "api_key_string" }
+const filesHandler = await SlikFiles.initialize(initParams)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+// A file-like object with raw data. The File interface inherits from Blob.
+// Assign the file object received after uploading a file.
+let file: File = 
 
-### `yarn build`
+// Upload a file with upload options
+const uploadOptions = { 
+    networks: ["filecoin"],
+    walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+    file: file,
+}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+filesHandler.uploadFile(uploadOptions, (fileId, err) => {
+    console.log("The unique identifier of the file uploaded: ", fileId);
+});
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+## Upload to Storj
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```javascript
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+// Import SlikFiles
+import { SlikFiles } from '@sliksafe/slik-files'
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+// Initialize slik-files
+const initParams = { apiKey: "api_key_string" }
+const filesHandler = await SlikFiles.initialize(initParams)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+// A file-like object with raw data. The File interface inherits from Blob.
+// Assign the file object received after uploading a file.
+let file: File = 
 
-## Learn More
+// Upload a file with upload options
+const uploadOptions = { 
+    networks: ["storj"],
+    walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+    file: file,
+}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+filesHandler.uploadFile(uploadOptions, (fileId, err) => {
+    console.log("The unique identifier of the file uploaded: ", fileId);
+});
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+
+
+## Upload to Arweave
+
+```javascript
+
+// Import SlikFiles
+import { SlikFiles } from '@sliksafe/slik-files'
+
+// Initialize slik-files
+const initParams = { apiKey: "api_key_string" }
+const filesHandler = await SlikFiles.initialize(initParams)
+
+// A file-like object with raw data. The File interface inherits from Blob.
+// Assign the file object received after uploading a file.
+let file: File = 
+
+// Upload a file with upload options
+const uploadOptions = { 
+    networks: ["arweave"],
+    walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+    file: file,
+}
+
+filesHandler.uploadFile(uploadOptions, (fileId, err) => {
+    console.log("The unique identifier of the file uploaded: ", fileId);
+});
+
+```
+
+
+## Notes
+
+Let's use the decentralized web! 
+
+![chandler-thumbsup](https://user-images.githubusercontent.com/2617936/164838147-c323a88b-82c9-42fc-9964-2cbe060e7488.gif)
+
+
