@@ -18,7 +18,7 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState<any>()
   const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
   const [networkDetails, setNetworkDetails] = useState<any>([]);
-  const [downloadingProgress, setDownloadingProgress] = useState(0);
+  const [uploadDownloadProgress, setUploadDownloadProgress] = useState(0);
 
   useEffect(() => {
     if (!!uploadedFile) {
@@ -94,25 +94,25 @@ function App() {
     let pendingUploadCount = selectedFiles.length
     selectedFiles.forEach((selectedFile: any) => {
       uploadOptions['file'] = selectedFile;
-      filesHandler.uploadFile(uploadOptions, (fileId: string, err: any) => {
+      filesHandler.uploadFile(uploadOptions, (uploadHandle: any, fileId: string, err: any) => {
         if (!!err) {
           message.error("Failed to upload file.")
           console.error('Failed to upload file: ', err)
         } else {
-          console.log("The unique identifier of the file uploaded: ", fileId);
-          setUploadedFile(fileId);
-
-          message.success({
-            key: 'upload-success',
-            content: 'File upload finished'
-          })
-        }
-
-        pendingUploadCount -= 1
-
-        if (pendingUploadCount === 0) {
-          setIsUploading(false)
-          setSelectedFiles([]);
+          console.log("Uploading file progress: ", uploadHandle);
+          setUploadDownloadProgress(uploadHandle.percentage);
+          if (uploadHandle.status === "uploaded") {
+            console.log("File upload finished");
+            console.log("The unique identifier of the file uploaded: ", fileId);
+            setUploadedFile(fileId);
+            setIsUploading(false);
+            setSelectedFiles([]);
+            setUploadDownloadProgress(0);
+            message.success({
+              key: 'upload-success',
+              content: 'File upload finished'
+            })
+          }
         }
       });
     });
@@ -140,10 +140,10 @@ function App() {
         console.error('Failed to download file: ', err)
       } else {
         console.log("Downloading file progress: ", downloadHandle.percentage);
-        setDownloadingProgress(downloadHandle.percentage);
+        setUploadDownloadProgress(downloadHandle.percentage);
         if (downloadHandle.status === "downloaded") {
           setIsDownloading(false)
-          setDownloadingProgress(0)
+          setUploadDownloadProgress(0)
           console.log("File download finished");
           console.log("Downloaded file: ", file);
           saveAs(file); // saving file to local disk
@@ -209,12 +209,12 @@ function App() {
   }
 
   const renderProgressBar = () => {
-    if (downloadingProgress === 0) {
+    if (uploadDownloadProgress === 0) {
       return <></>;
     }
     return (<Row style={{ maxWidth: '50%' }} justify="center" align='middle'>
       <Col span={24}>
-        <Progress percent={downloadingProgress} />
+        <Progress percent={uploadDownloadProgress} />
       </Col>
     </Row>);
   }

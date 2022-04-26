@@ -1537,10 +1537,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sliksafe/protect@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@sliksafe/protect/-/protect-1.0.0.tgz#aa61657d923433063de6854d265e9970ee8bf291"
-  integrity sha512-LhOl1eqI/5wSM0+WaDkDLwqW8pPiXcAYxutpdwNgzfjvd0AuPMa9DvDaHEuZn371KeO/HwVqbgcTY7zmjdCvZQ==
+"@sliksafe/protect@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@sliksafe/protect/-/protect-1.0.2.tgz#b038a52d75a48d007303ac6fe360ab11950540db"
+  integrity sha512-aqJSY8L/YphHvKpkFDAO7nG3r1aNK8s0PErfcz8QJdP+b6Do5Nyy5BUsffO7EZM4mhMIyOldCGtMbHUqokS2KQ==
   dependencies:
     "@babel/plugin-syntax-jsx" "^7.16.7"
     "@sliksafe/slik-files" "^0.9.18"
@@ -1551,9 +1551,9 @@
     rollup-plugin-web-worker-loader "^1.3.0"
 
 "@sliksafe/slik-files@^0.9.18":
-  version "0.9.18"
-  resolved "https://registry.yarnpkg.com/@sliksafe/slik-files/-/slik-files-0.9.18.tgz#1747a3885e544e43fad1f5ea331596ff3e1600d4"
-  integrity sha512-Xx0naDRJY4RWqIWJNhlsqP7N5/tL9AG7orLZh+ZthX2fSWOlvhnZj5zQ6SBtUAEG96phrjzqZvUtUPtCgZWsYg==
+  version "0.9.22"
+  resolved "https://registry.yarnpkg.com/@sliksafe/slik-files/-/slik-files-0.9.22.tgz#fa5991ebdf5e195632704859025d263c7875c678"
+  integrity sha512-CR7weuKYoq/HY0J8cPB4Pamaf8kyzV3NnOYj05ObjmFxx4Q3T7HJvhJ7A9EoxzTpHDFvyQTlhlnzmSFTHoN+WQ==
   dependencies:
     buffer "^6.0.3"
     fetch-progress "^1.3.0"
