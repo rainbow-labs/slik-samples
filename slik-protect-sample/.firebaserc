@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "slikdevelopers"
+  },
+  "targets": {
+    "slikdevelopers": {
+      "hosting": {
+        "slikdevelopers": [
+          "slikprotectdemo"
+        ]
+      }
+    }
+  }
+}
