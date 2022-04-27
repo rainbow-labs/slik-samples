@@ -3,6 +3,7 @@ import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
 import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
 import { saveAs } from 'file-saver';
+import { SlikMint } from '@sliksafe/mint';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -37,10 +38,7 @@ function App() {
 
   const networkOptions = [
     { label: 'FileCoin', value: 'filecoin' },
-    { label: 'Storj', value: 'storj' },
-    { label: 'Arweave', value: 'arweave' },
-    { label: 'S3', value: 's3' },
-    { label: 'GCS', value: 'gcs' },
+    { label: 'Storj', value: 'storj' }
   ];
 
   const props = {
@@ -114,6 +112,67 @@ function App() {
             })
           }
         }
+      });
+    });
+  }
+
+  async function uploadMint() {
+    if (!!!apiKey) {
+      message.error({
+        key: 'api-key-error',
+        content: 'Please enter an API key'
+      })
+      return
+    }
+
+    if (!!!selectedFiles || selectedFiles.length === 0) {
+      message.error({
+        key: 'file-selection-error',
+        content: 'Please select a file'
+      })
+      return
+    }
+
+    const initParams: any = {
+      apiKey: apiKey
+    };
+
+
+    setIsUploading(true)
+
+    const filesHandler = await SlikMint.initialize(initParams);
+   
+    const contractOptions = {
+      tokenName: "BoredApeYachtClub",
+      tokenSymbol: "BAYC",
+      chain: "polygon",
+      protocol: "ERC721"
+    }
+    filesHandler.deployContract(contractOptions, (response: any, err: any) => {
+      console.log("The contract was deployed with id: ", response.contractId);
+    })
+
+    const metadataJSON = {
+      name: "My Awesome NFT #1",
+      description: "This is the description of my awesome, NFT!",
+    }
+
+    const mintOptions: any = {
+      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+      contractAddress: "<enter-contract-address>",
+      storageNetwork: "filecoin", // or "arweave"
+      chain: "polygon",
+      metadata: metadataJSON,
+    }
+    selectedFiles.forEach((selectedFile: any) => {
+      mintOptions['file'] = selectedFile;
+      filesHandler.mintNFT(mintOptions, (response: any, err: any) => {
+        if (!!err) {
+          console.error("Failed to mint NFTs");
+          return
+        }
+        const txId = response.txId;
+        console.log("NFT minting completed. Transaction id: ", txId);
       });
     });
   }
@@ -229,7 +288,7 @@ function App() {
           type="primary"
           loading={isUploading}
           style={{ margin: 16 }}
-          onClick={() => uploadFile()}>
+          onClick={() => uploadMint()}>
           Upload
         </Button>
         {
