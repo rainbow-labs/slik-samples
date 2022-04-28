@@ -3,6 +3,7 @@ import './App.css';
 import { SlikFiles } from '@sliksafe/slik-files';
 import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
 import { saveAs } from 'file-saver';
+import { SlikMint } from '@sliksafe/mint';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -11,8 +12,16 @@ const { Step } = Steps;
 function App() {
 
   const [isUploading, setIsUploading] = useState(false)
+  const [isDeployingContract, setIsDeployingSmartContract] = useState(false)
+  const [contractAddress, setContractAddress] = useState<string>()
+  const [mintedHash, setMintedHash] = useState<string>()
+  const [nftName, setNftName] = useState<string>()
+  const [nftDesc, setNftDesc] = useState<string>()
+
   const [isDownloading, setIsDownloading] = useState(false)
   const [apiKey, setAPIKey] = useState<string>()
+  const [tokenName, setTokenName] = useState<string>()
+  const [tokenSymbol, setTokenSymbol] = useState<string>()
 
   const [selectedFiles, setSelectedFiles] = useState<any>([])
   const [uploadedFile, setUploadedFile] = useState<any>()
@@ -22,13 +31,13 @@ function App() {
 
   useEffect(() => {
     if (!!uploadedFile) {
-      SlikFiles.getInstance().networkLinkListener(uploadedFile, networkDetailsListenerCallback);
+      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
     }
   }, [uploadedFile]);
 
   const networkDetailsListenerCallback = (response: any) => {
     console.log("networkDetailsListenerCallback", response);
-    setNetworkDetails(response.networks);
+    setNetworkDetails(response);
   }
 
   function onChange(selectedValues: any) {
@@ -36,11 +45,9 @@ function App() {
   }
 
   const networkOptions = [
-    { label: 'FileCoin', value: 'filecoin' },
+    { label: 'Filecoin', value: 'filecoin' },
     { label: 'Storj', value: 'storj' },
-    { label: 'Arweave', value: 'arweave' },
-    { label: 'S3', value: 's3' },
-    { label: 'GCS', value: 'gcs' },
+    { label: 'Arweave', value: 'arweave' }
   ];
 
   const props = {
@@ -52,21 +59,13 @@ function App() {
     }
   };
 
-  async function uploadFile() {
+  async function mintNFT() {
     if (!!!apiKey) {
       message.error({
         key: 'api-key-error',
         content: 'Please enter an API key'
       })
       return
-    }
-
-    if (!!!selectedNetworks || selectedNetworks.length === 0) {
-      message.error({
-        key: 'network-selection-error',
-        content: "Please select at least one network"
-      });
-      return;
     }
 
     if (!!!selectedFiles || selectedFiles.length === 0) {
@@ -81,79 +80,68 @@ function App() {
       apiKey: apiKey
     };
 
-
     setIsUploading(true)
 
-    const filesHandler = await SlikFiles.initialize(initParams);
-    let uploadOptions: any = {
-      isEncrypted: false,
-      networks: selectedNetworks,
-      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
+    const filesHandler = await SlikMint.initialize(initParams);
+
+    const metadataJSON = {
+      name: nftName,
+      description: nftDesc,
     }
 
-    let pendingUploadCount = selectedFiles.length
+    const mintOptions: any = {
+      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+      contractAddress: contractAddress,
+      storageNetwork: "filecoin", // or "arweave"
+      chain: "polygon",
+      metadata: metadataJSON,
+    }
     selectedFiles.forEach((selectedFile: any) => {
-      uploadOptions['file'] = selectedFile;
-      filesHandler.uploadFile(uploadOptions, (uploadHandle: any, fileId: string, err: any) => {
+      mintOptions['file'] = selectedFile;
+      filesHandler.mintNFT(mintOptions, (response: any, err: any) => {
         if (!!err) {
-          message.error("Failed to upload file.")
-          console.error('Failed to upload file: ', err)
-        } else {
-          console.log("Uploading file progress: ", uploadHandle);
-          setUploadDownloadProgress(uploadHandle.percentage);
-          if (uploadHandle.status === "uploaded") {
-            console.log("File upload finished");
-            console.log("The unique identifier of the file uploaded: ", fileId);
-            setUploadedFile(fileId);
-            setIsUploading(false);
-            setSelectedFiles([]);
-            setUploadDownloadProgress(0);
-            message.success({
-              key: 'upload-success',
-              content: 'File upload finished'
-            })
-          }
+          console.error("Failed to mint NFTs", err);
+          return
         }
+        const txId = response.txId;
+        console.log("NFT minting completed. Transaction id: ", txId);
+        setMintedHash(`https://mumbai.polygonscan.com/tx/${txId}`);
       });
     });
   }
 
-  async function downloadFile() {
-    if (!!!uploadedFile) {
+  async function deployContract() {
+    if (!!!apiKey) {
       message.error({
-        key: 'file-download-error',
-        content: 'Please upload a file first'
+        key: 'api-key-error',
+        content: 'Please enter an API key'
       })
       return
     }
-    setIsDownloading(true)
-    const filesHandler = SlikFiles.getInstance();
-    let downloadOptions: any = {
-      fileId: uploadedFile,
-      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311"
-    }
 
-    filesHandler.downloadFile(downloadOptions, (downloadHandle: any, file: any, err: any) => {
+    const initParams: any = {
+      apiKey: apiKey
+    };
+
+    setIsDeployingSmartContract(true)
+
+    const deployContractHandler = await SlikMint.initialize(initParams);
+
+    const contractOptions = {
+      tokenName: tokenName,
+      tokenSymbol: tokenSymbol,
+      chain: "polygon",
+      protocol: "ERC721"
+    }
+    deployContractHandler.deployContract(contractOptions, (response: any, err: any) => {
+      setIsDeployingSmartContract(false);
       if (!!err) {
-        console.error(err);
-        message.error("Failed to download file.")
-        console.error('Failed to download file: ', err)
-      } else {
-        console.log("Downloading file progress: ", downloadHandle.percentage);
-        setUploadDownloadProgress(downloadHandle.percentage);
-        if (downloadHandle.status === "downloaded") {
-          setIsDownloading(false)
-          setUploadDownloadProgress(0)
-          console.log("File download finished");
-          console.log("Downloaded file: ", file);
-          saveAs(file); // saving file to local disk
-          message.success({
-            key: 'download-success',
-            content: 'File download finished'
-          });
-        }
+        console.error("Failed to deploy contract", err);
+        return
       }
-    });
+      console.log("The contract was deployed with id: ", response.contractId);
+      setContractAddress(`https://etherscan.io/address/${response.contractId}`);
+    })
   }
 
   const renderDraggerDiv = () => {
@@ -199,11 +187,37 @@ function App() {
     )
   }
 
-  const renderStorageNetworkSelection = () => {
+  const renderDeploySmartContract = () => {
     return (
       <div>
-        <p style={{ margin: 16 }}>Select as many storage networks<br /></p>
-        <Checkbox.Group style={{ margin: 16 }} options={networkOptions} defaultValue={['filecoin']} onChange={onChange} />
+        <p style={{ margin: 16 }}>Enter NFT Contract Details<br /></p>
+        <div>
+          <Input
+            placeholder="Enter Token Name"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setTokenName(event.target.value)} />
+
+          <Input
+            placeholder="Enter Token Symbol"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setTokenSymbol(event.target.value)} />
+        </div>
+        <div>
+          <Button
+            type="primary"
+            loading={isDeployingContract}
+            style={{ margin: 16 }}
+            onClick={() => deployContract()}>
+            Deploy Contract
+          </Button>
+        </div>
+        <div>
+          {!!contractAddress ? <Alert
+            description={`Contract address is: ${contractAddress}`}
+            type="success"
+            style={{ borderRadius: '8px', margin: 16, width: '50%' }}
+          /> : <div></div>}
+        </div>
       </div>
     )
   }
@@ -212,6 +226,7 @@ function App() {
     if (uploadDownloadProgress === 0) {
       return <></>;
     }
+
     return (<Row style={{ maxWidth: '50%' }} justify="center" align='middle'>
       <Col span={24}>
         <Progress percent={uploadDownloadProgress} />
@@ -219,29 +234,39 @@ function App() {
     </Row>);
   }
 
-  const renderFileSelection = () => {
+  const renderMintNFT = () => {
     return (
       <div>
         {renderDraggerDiv()}
         {renderProgressBar()}
 
+        <div>
+          <Input
+            placeholder="Enter NFT Name"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setNftName(event.target.value)} />
+
+          <Input
+            placeholder="Enter NFT Description"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setNftDesc(event.target.value)} />
+        </div>
+
         <Button
           type="primary"
           loading={isUploading}
           style={{ margin: 16 }}
-          onClick={() => uploadFile()}>
-          Upload
+          onClick={() => mintNFT()}>
+          Upload and mint NFT
         </Button>
-        {
-          uploadedFile ?
-            <Button
-              type="primary"
-              loading={isDownloading}
-              style={{ margin: 16 }}
-              onClick={() => downloadFile()}>
-              Download
-            </Button> : <></>
-        }
+
+        <div>
+          {!!mintedHash ? <Alert
+            description={`Minted NFT transaction hash: ${mintedHash}`}
+            type="success"
+            style={{ borderRadius: '8px', margin: 16, width: '50%' }}
+          /> : <div></div>}
+        </div>
       </div >
     )
   }
@@ -280,12 +305,12 @@ function App() {
     <div className="App">
       <Row justify='center'>
         <Col span={24} style={{ maxWidth: '60%' }}>
-          <p style={{ margin: 16 }}>Slik Files Demo App<br /></p>
+          <p style={{ margin: 16 }}>Slik Mint Demo App<br /></p>
 
           <Steps direction="vertical" current={2} progressDot>
             <Step title="Register API Key" description={renderAPIKeyRegistration()} />
-            <Step title="Select storage networks" description={renderStorageNetworkSelection()} />
-            <Step title="Upload file" description={renderFileSelection()} />
+            <Step title="Deploy a NFT smart contract" description={renderDeploySmartContract()} />
+            <Step title="Mint a NFT" description={renderMintNFT()} />
           </Steps>
           {renderNetworkDetails()}
         </Col>
