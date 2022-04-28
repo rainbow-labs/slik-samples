@@ -22,13 +22,13 @@ function App() {
 
   useEffect(() => {
     if (!!uploadedFile) {
-      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
+      SlikFiles.getInstance().networkLinkListener(uploadedFile, networkDetailsListenerCallback);
     }
   }, [uploadedFile]);
 
   const networkDetailsListenerCallback = (response: any) => {
     console.log("networkDetailsListenerCallback", response);
-    setNetworkDetails(response);
+    setNetworkDetails(response.networks);
   }
 
   function onChange(selectedValues: any) {

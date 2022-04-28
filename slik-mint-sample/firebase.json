@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "slikfilesdemo",
+    "site": "slikmintdemo",
     "public": "build",
     "ignore": [
       "firebase.json",
