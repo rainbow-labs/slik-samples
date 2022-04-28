@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     if (!!uploadedFile) {
-      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
+      SlikFiles.getInstance().networkLinkListener(uploadedFile, networkDetailsListenerCallback);
     }
   }, [uploadedFile]);
 
