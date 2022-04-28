@@ -12,6 +12,10 @@ const { Step } = Steps;
 function App() {
 
   const [isUploading, setIsUploading] = useState(false)
+  const [isDeployingContract, setIsDeployingSmartContract] = useState(false)
+  const [contractAddress, setContractAddress] = useState()
+  const [mintedHash, setMintedHash] = useState()
+
   const [isDownloading, setIsDownloading] = useState(false)
   const [apiKey, setAPIKey] = useState<string>()
 
@@ -71,7 +75,6 @@ function App() {
     const initParams: any = {
       apiKey: apiKey
     };
-
 
     setIsUploading(true)
 
@@ -259,11 +262,37 @@ function App() {
     )
   }
 
-  const renderStorageNetworkSelection = () => {
+  const renderDeploySmartContract = () => {
     return (
       <div>
-        <p style={{ margin: 16 }}>Select as many storage networks<br /></p>
-        <Checkbox.Group style={{ margin: 16 }} options={networkOptions} defaultValue={['filecoin']} onChange={onChange} />
+        <p style={{ margin: 16 }}>Enter NFT Contract Details<br /></p>
+        <div>
+          <Input
+            placeholder="Enter Token Name"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setAPIKey(event.target.value)} />
+
+          <Input
+            placeholder="Enter Token Symbol"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setAPIKey(event.target.value)} />
+        </div>
+        <div>
+          <Button
+            type="primary"
+            loading={isDeployingContract}
+            style={{ margin: 16 }}
+            onClick={() => uploadMint()}>
+            Deploy Contract
+          </Button>
+        </div>
+        <div>
+          {!!contractAddress ? <Alert
+            description={`Contract address is: ${contractAddress}`}
+            type="success"
+            style={{ borderRadius: '8px', margin: 16, width: '50%' }}
+          /> : <div></div> }
+        </div>
       </div>
     )
   }
@@ -272,6 +301,7 @@ function App() {
     if (uploadDownloadProgress === 0) {
       return <></>;
     }
+
     return (<Row style={{ maxWidth: '50%' }} justify="center" align='middle'>
       <Col span={24}>
         <Progress percent={uploadDownloadProgress} />
@@ -279,29 +309,39 @@ function App() {
     </Row>);
   }
 
-  const renderFileSelection = () => {
+  const renderMintNFT = () => {
     return (
       <div>
         {renderDraggerDiv()}
         {renderProgressBar()}
+
+        <div>
+          <Input
+            placeholder="Enter NFT Name"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setAPIKey(event.target.value)} />
+
+          <Input
+            placeholder="Enter NFT Description"
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setAPIKey(event.target.value)} />
+        </div>
 
         <Button
           type="primary"
           loading={isUploading}
           style={{ margin: 16 }}
           onClick={() => uploadFile()}>
-          Upload
+          Upload and mint NFT
         </Button>
-        {
-          uploadedFile ?
-            <Button
-              type="primary"
-              loading={isDownloading}
-              style={{ margin: 16 }}
-              onClick={() => uploadMint()}>
-              MINT as NFT
-            </Button> : <></>
-        }
+
+        <div>
+          {!!mintedHash ? <Alert
+              description={`Minted NFT transaction hash: ${mintedHash}`}
+              type="success"
+              style={{ borderRadius: '8px', margin: 16, width: '50%' }}
+            /> : <div></div> }
+        </div>
       </div >
     )
   }
@@ -344,8 +384,8 @@ function App() {
 
           <Steps direction="vertical" current={2} progressDot>
             <Step title="Register API Key" description={renderAPIKeyRegistration()} />
-            <Step title="Select storage networks" description={renderStorageNetworkSelection()} />
-            <Step title="Upload file" description={renderFileSelection()} />
+            <Step title="Deploy a NFT smart contract" description={renderDeploySmartContract()} />
+            <Step title="Mint a NFT" description={renderMintNFT()} />
           </Steps>
           {renderNetworkDetails()}
         </Col>
