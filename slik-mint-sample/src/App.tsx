@@ -4,6 +4,7 @@ import { SlikFiles } from '@sliksafe/slik-files';
 import { Button, Col, Checkbox, Empty, message, Row, Typography, Upload, Input, Alert, Steps, Table, Spin, Progress } from 'antd';
 import { saveAs } from 'file-saver';
 import { SlikMint } from '@sliksafe/mint';
+import { http } from './FetcherService';
 
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -110,7 +111,24 @@ function App() {
     });
   }
 
+  const testAPICall = () => {
+    const requestData =  {
+      "tokenName": "arpit",
+      "tokenSymbol": "asdf"
+    }
+
+    http("/deploy_contract", {}, requestData, false)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch(console.error)
+  }
+
   async function deployContract() {
+
+    testAPICall()
+    return
+
     if (!!!apiKey) {
       message.error({
         key: 'api-key-error',
