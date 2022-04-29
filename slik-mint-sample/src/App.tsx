@@ -111,23 +111,7 @@ function App() {
     });
   }
 
-  const testAPICall = () => {
-    const requestData =  {
-      "tokenName": "arpit",
-      "tokenSymbol": "asdf"
-    }
-
-    http("/deploy_contract", {}, requestData, false)
-      .then((response) => {
-        console.log(response)
-      })
-      .catch(console.error)
-  }
-
   async function deployContract() {
-
-    testAPICall()
-    return
 
     if (!!!apiKey) {
       message.error({

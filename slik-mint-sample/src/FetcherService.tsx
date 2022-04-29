@@ -12,7 +12,6 @@ export async function http<T>(
   headerDict['Content-Type'] = 'application/json';
 
   const response = await fetch(endpoint, {
-    credentials: 'include',
     method: 'POST',
     body: JSON.stringify(content),
     headers: headerDict
