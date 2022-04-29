@@ -11,7 +11,7 @@ const { Step } = Steps;
 
 function App() {
 
-  const [isUploading, setIsUploading] = useState(false)
+  const [isMinting, setIsMinting] = useState(false)
   const [isDeployingContract, setIsDeployingSmartContract] = useState(false)
   const [contractAddress, setContractAddress] = useState<string>()
   const [mintedHash, setMintedHash] = useState<string>()
@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     if (!!uploadedFile) {
-      SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
+      // SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
     }
   }, [uploadedFile]);
 
@@ -80,7 +80,7 @@ function App() {
       apiKey: apiKey
     };
 
-    setIsUploading(true)
+    setIsMinting(true)
 
     const filesHandler = await SlikMint.initialize(initParams);
 
@@ -99,13 +99,14 @@ function App() {
     selectedFiles.forEach((selectedFile: any) => {
       mintOptions['file'] = selectedFile;
       filesHandler.mintNFT(mintOptions, (response: any, err: any) => {
+        setIsMinting(false)
         if (!!err) {
           console.error("Failed to mint NFTs", err);
           return
         }
         const txId = response.txId;
         console.log("NFT minting completed. Transaction id: ", txId);
-        setMintedHash(`https://mumbai.polygonscan.com/tx/${txId}`);
+        setMintedHash(`https://polygonscan.com/tx/${txId}`);
       });
     });
   }
@@ -139,8 +140,8 @@ function App() {
         console.error("Failed to deploy contract", err);
         return
       }
-      console.log("The contract was deployed with id: ", response.contractId);
-      setContractAddress(`https://etherscan.io/address/${response.contractId}`);
+      console.log("The contract was deployed with id: ", response.contractAddress);
+      setContractAddress(response.contractAddress);
     })
   }
 
@@ -213,7 +214,7 @@ function App() {
         </div>
         <div>
           {!!contractAddress ? <Alert
-            description={`Contract address is: ${contractAddress}`}
+            description={`Contract address is:  https://polygonscan.com/address/${contractAddress}`}
             type="success"
             style={{ borderRadius: '8px', margin: 16, width: '50%' }}
           /> : <div></div>}
@@ -254,7 +255,7 @@ function App() {
 
         <Button
           type="primary"
-          loading={isUploading}
+          loading={isMinting}
           style={{ margin: 16 }}
           onClick={() => mintNFT()}>
           Upload and mint NFT

@@ -1551,10 +1551,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sliksafe/mint@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@sliksafe/mint/-/mint-1.0.1.tgz#8acfefdc578c1b9011389041f0b3d3a8c59b4a5e"
-  integrity sha512-NBbONtWgAlL7F3ovFhQJ9zzUaSA9za4fXxaox1qGT9spCvyJJguMszF0lsUi1ytiyT2zNAeuPe5vyhSfwg+WTA==
+"@sliksafe/mint@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@sliksafe/mint/-/mint-1.0.2.tgz#910bd01f2cbca4434654b512b6d014c4eba6a5c2"
+  integrity sha512-atL5Wt+tKVhCruJ/zCQJK8Fz2ALicgK+S04bnDBss2LSQjST6K2vUvx+t4i2Jrew6SwZHk6vF5LaKSuX91/umA==
   dependencies:
     "@babel/plugin-syntax-jsx" "^7.16.7"
     "@sliksafe/slik-files" "^0.9.27"
