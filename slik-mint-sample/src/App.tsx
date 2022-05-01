@@ -18,37 +18,14 @@ function App() {
   const [nftName, setNftName] = useState<string>()
   const [nftDesc, setNftDesc] = useState<string>()
 
-  const [isDownloading, setIsDownloading] = useState(false)
   const [apiKey, setAPIKey] = useState<string>()
   const [tokenName, setTokenName] = useState<string>()
   const [tokenSymbol, setTokenSymbol] = useState<string>()
+  const [walletAddress, setWalletAddress] = useState<string>()
 
   const [selectedFiles, setSelectedFiles] = useState<any>([])
-  const [uploadedFile, setUploadedFile] = useState<any>()
-  const [selectedNetworks, setSelectedNetworks] = useState<string[]>(["filecoin"]);
   const [networkDetails, setNetworkDetails] = useState<any>([]);
   const [uploadDownloadProgress, setUploadDownloadProgress] = useState(0);
-
-  useEffect(() => {
-    if (!!uploadedFile) {
-      // SlikFiles.getInstance().networkDetails(uploadedFile, networkDetailsListenerCallback);
-    }
-  }, [uploadedFile]);
-
-  const networkDetailsListenerCallback = (response: any) => {
-    console.log("networkDetailsListenerCallback", response);
-    setNetworkDetails(response);
-  }
-
-  function onChange(selectedValues: any) {
-    setSelectedNetworks(selectedValues);
-  }
-
-  const networkOptions = [
-    { label: 'Filecoin', value: 'filecoin' },
-    { label: 'Storj', value: 'storj' },
-    { label: 'Arweave', value: 'arweave' }
-  ];
 
   const props = {
     name: 'file',
@@ -76,6 +53,14 @@ function App() {
       return
     }
 
+    if (!!!walletAddress) {
+      message.error({
+        key: 'file-wallet-address',
+        content: 'Please select a wallet address'
+      })
+      return
+    }
+
     const initParams: any = {
       apiKey: apiKey
     };
@@ -90,7 +75,7 @@ function App() {
     }
 
     const mintOptions: any = {
-      walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+      walletAddress: walletAddress,
       contractAddress: contractAddress,
       storageNetwork: "filecoin", // or "arweave"
       chain: "polygon",
@@ -132,7 +117,7 @@ function App() {
       tokenName: tokenName,
       tokenSymbol: tokenSymbol,
       chain: "polygon",
-      protocol: "ERC721"
+      protocol: "ERC721",
     }
     deployContractHandler.deployContract(contractOptions, (response: any, err: any) => {
       setIsDeployingSmartContract(false);
@@ -242,6 +227,13 @@ function App() {
         {renderProgressBar()}
 
         <div>
+          
+          <Input
+            placeholder="Enter Wallet Address"
+            defaultValue={walletAddress}
+            style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
+            onChange={(event) => setWalletAddress(event.target.value)} />
+
           <Input
             placeholder="Enter NFT Name"
             style={{ borderRadius: '8px', margin: 16, height: 44, width: '50%' }}
