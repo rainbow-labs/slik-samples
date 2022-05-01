@@ -21,7 +21,7 @@ function App() {
   const [apiKey, setAPIKey] = useState<string>()
   const [tokenName, setTokenName] = useState<string>()
   const [tokenSymbol, setTokenSymbol] = useState<string>()
-  const [walletAddress, setWalletAddress] = useState<string>('0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311')
+  const [walletAddress, setWalletAddress] = useState<string>()
 
   const [selectedFiles, setSelectedFiles] = useState<any>([])
   const [networkDetails, setNetworkDetails] = useState<any>([]);
@@ -49,6 +49,14 @@ function App() {
       message.error({
         key: 'file-selection-error',
         content: 'Please select a file'
+      })
+      return
+    }
+
+    if (!!!walletAddress) {
+      message.error({
+        key: 'file-wallet-address',
+        content: 'Please select a wallet address'
       })
       return
     }
