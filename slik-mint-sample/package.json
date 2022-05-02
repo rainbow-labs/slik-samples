@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@sliksafe/mint": "^1.0.2",
-    "@sliksafe/slik-files": "^0.9.22",
+    "@sliksafe/mint": "^1.0.3",
+    "@sliksafe/slik-files": "^0.9.28",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
