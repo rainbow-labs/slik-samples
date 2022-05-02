@@ -1551,10 +1551,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sliksafe/slik-files@^0.9.27":
-  version "0.9.27"
-  resolved "https://registry.yarnpkg.com/@sliksafe/slik-files/-/slik-files-0.9.27.tgz#a413447fb7683c4c851f6648a4b899878ef49ea6"
-  integrity sha512-jZNUlVu1AQVkUD9LcC/XhCGRscCbdYVlFUlbLBRiNVergGDevwlN8KvBcAzEYHlPy0u2x2Tnw4uMKjr49OYQ3g==
+"@sliksafe/slik-files@^0.9.28":
+  version "0.9.28"
+  resolved "https://registry.yarnpkg.com/@sliksafe/slik-files/-/slik-files-0.9.28.tgz#5739c0a1b1570a03251c4ff64bccff59f60f82ce"
+  integrity sha512-D+sTBQpHeh54zAax8xhBkghKGApQvN3AVFKMfSlCuka0i5mGUAG9dqSfB/a89kB/DsmXtjC8rAlvW0Rkw+6mdg==
   dependencies:
     buffer "^6.0.3"
     fetch-progress "^1.3.0"
