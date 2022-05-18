@@ -1,34 +1,112 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Slik Files Sample App for NextJS
 
-## Getting Started
+Generate an API key on the [cloud dashboard](https://console.developers.sliksafe.com)
 
-First, run the development server:
+Refer the [detailed documentation](https://developers.sliksafe.com/docs/package/decentralized-storage) to integrate `@sliksafe/slik-files` for uploading and downloading files to the decentralized web.
+
+
+## DEMO
+
+The slik-files sample demo app is deployed to - https://slikfilesdemo.web.app/
+
+
+## Install the library
 
 ```bash
-npm run dev
-# or
-yarn dev
+# Install via yarn
+yarn add @sliksafe/slik-files
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Upload to Filecoin
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```javascript
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+// Import SlikFiles
+import { SlikFiles } from '@sliksafe/slik-files'
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+// Initialize slik-files
+const initParams = { apiKey: "... <enter your api key> ..." }
+const filesHandler = await SlikFiles.initialize(initParams)
 
-## Learn More
+// A file-like object with raw data. The File interface inherits from Blob.
+// Assign the file object received after uploading a file.
+let file: File = 
 
-To learn more about Next.js, take a look at the following resources:
+// Upload a file with upload options
+const uploadOptions = { 
+    networks: ["filecoin"],
+    walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+    file: file,
+    isEncrypted: false,
+}
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+filesHandler.uploadFile(uploadOptions, (uploadHandle, fileId, err) => {
+    console.log("The unique identifier of the file uploaded: ", fileId);
+    
+    if (!!err) {
+      console.error('Failed to upload file: ', err)
+    } else {
+      console.log("Uploading file progress: ", uploadHandle);
+      setUploadDownloadProgress(uploadHandle.percentage);
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+      if (uploadHandle.status === "uploaded") {
+        console.log("File upload finished");
+        console.log("The unique identifier of the file uploaded: ", fileId);
+      }
+    }
+});
 
-## Deploy on Vercel
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Upload to Arweave
+
+```javascript
+
+// Import SlikFiles
+import { SlikFiles } from '@sliksafe/slik-files'
+
+// Initialize slik-files
+const initParams = { apiKey: "api_key_string" }
+const filesHandler = await SlikFiles.initialize(initParams)
+
+// A file-like object with raw data. The File interface inherits from Blob.
+// Assign the file object received after uploading a file.
+let file: File = 
+
+// Upload a file with upload options
+const uploadOptions = { 
+    networks: ["arweave"],
+    walletAddress: "0x5c14E7A5e9D4568Bb8B1ebEE2ceB2E32Faee1311",
+    file: file,
+    isEncrypted: false,
+}
+
+filesHandler.uploadFile(uploadOptions, (uploadHandle, fileId, err) => {
+    console.log("The unique identifier of the file uploaded: ", fileId);
+    
+    if (!!err) {
+      console.error('Failed to upload file: ', err)
+    } else {
+      console.log("Uploading file progress: ", uploadHandle);
+      setUploadDownloadProgress(uploadHandle.percentage);
+
+      if (uploadHandle.status === "uploaded") {
+        console.log("File upload finished");
+        console.log("The unique identifier of the file uploaded: ", fileId);
+      }
+    }
+});
+
+
+```
+
+
+
+## Notes
+
+Let's use the decentralized web! 
+
+![chandler-thumbsup](https://user-images.githubusercontent.com/2617936/164838147-c323a88b-82c9-42fc-9964-2cbe060e7488.gif)
+
+
