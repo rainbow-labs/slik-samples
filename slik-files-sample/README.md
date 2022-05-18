@@ -1,11 +1,14 @@
 # Slik Files Sample App
 
-The sample demo app is deployed to - https://slikfilesdemo.web.app/
+Generate an API key on the [cloud dashboard](https://console.developers.sliksafe.com)
 
-You would need an API key to upload/download files. You can generate an API key on the developer dashboard: [https://console.developers.sliksafe.com
-](https://console.developers.sliksafe.com)
+Refer the [detailed documentation](https://developers.sliksafe.com/docs/package/decentralized-storage) to integrate `@sliksafe/slik-files` for uploading and downloading files to the decentralized web.
 
-The detailed documentation to integrate `@sliksafe/slik-files` to upload/download files can be found here: https://slik.gitbook.io/docs/packages/upload-and-download-files
+
+## DEMO
+
+The slik-files sample demo app is deployed to - https://slikfilesdemo.web.app/
+
 
 ## Install the library
 
