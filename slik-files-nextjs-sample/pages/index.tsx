@@ -18,7 +18,7 @@ const Home: NextPage = () => {
   const [downloadProgress, setDownloadProgress] = useState<number>(0)
   const [uploadedFileId, setUploadedFileId] = useState<string>()
 
-  const initParams = { apiKey: "VNtQYcfVcNXo4cvNCwEtx" }
+  const initParams = { apiKey: ".... api ... key ... " }
 
   const uploadFile = async (selectedFile: File) => {
 
