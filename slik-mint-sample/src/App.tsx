@@ -70,8 +70,33 @@ function App() {
     const filesHandler = await SlikMint.initialize(initParams);
 
     const metadataJSON = {
-      name: nftName,
-      description: nftDesc,
+      title: "Asset Metadata",
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+          description: nftName
+        },
+        description: {
+          type: "string",
+          description: nftDesc
+        },
+      },
+      attributes: [
+        {
+          trait_type: "Base",
+          value: "Starfish",
+        },
+        {
+          trait_type: "Eyes",
+          value: "Golden",
+        },
+        {
+          display_type: "boost_percentage",
+          trait_type: "Stamina Increase",
+          value: 40
+        },
+      ]
     }
 
     const mintOptions: any = {
@@ -227,7 +252,7 @@ function App() {
         {renderProgressBar()}
 
         <div>
-          
+
           <Input
             placeholder="Enter Wallet Address"
             defaultValue={walletAddress}
