@@ -158,7 +158,7 @@ function App() {
         <div>
           <Alert
             // message="Register API Key"
-            description={`Get an API Key from https://console.developers.sliksafe.com`}
+            description={`Get an API Key from https://enterprise.sliksafe.com`}
             type="warning"
             style={{ borderRadius: '8px', margin: 16, width: '50%' }}
           />
