@@ -72,6 +72,23 @@ function App() {
     const metadataJSON = {
       name: nftName,
       description: nftDesc,
+      external_url: "https://nft-project.com/collection-name/unique-nft-number",
+      background_color: "ffffff",
+      attributes: [
+        {
+          trait_type: "Base",
+          value: "Starfish",
+        },
+        {
+          trait_type: "Eyes",
+          value: "Golden",
+        },
+        {
+          display_type: "boost_percentage",
+          trait_type: "Stamina Increase",
+          value: 40
+        },
+      ]
     }
 
     const mintOptions: any = {
@@ -158,7 +175,7 @@ function App() {
         <div>
           <Alert
             // message="Register API Key"
-            description={`Get an API Key from https://console.developers.sliksafe.com`}
+            description={`Get an API Key from https://enterprise.sliksafe.com`}
             type="warning"
             style={{ borderRadius: '8px', margin: 16, width: '50%' }}
           />
@@ -227,7 +244,7 @@ function App() {
         {renderProgressBar()}
 
         <div>
-          
+
           <Input
             placeholder="Enter Wallet Address"
             defaultValue={walletAddress}
