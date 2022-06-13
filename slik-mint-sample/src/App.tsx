@@ -70,18 +70,10 @@ function App() {
     const filesHandler = await SlikMint.initialize(initParams);
 
     const metadataJSON = {
-      title: "Asset Metadata",
-      type: "object",
-      properties: {
-        name: {
-          type: "string",
-          description: nftName
-        },
-        description: {
-          type: "string",
-          description: nftDesc
-        },
-      },
+      name: nftName,
+      description: nftDesc,
+      external_url: "https://nft-project.com/collection-name/unique-nft-number",
+      background_color: "ffffff",
       attributes: [
         {
           trait_type: "Base",
